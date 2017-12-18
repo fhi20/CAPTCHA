@@ -10,7 +10,7 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		CaptchaCreator c = new CaptchaCreator();
-		c.captchaGen();
+		c.charCaptchaGen();
 		
 		try {
 //			AudioMix.play("adult_male0.wav", "adult_female0.wav", 5, -10);
