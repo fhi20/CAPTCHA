@@ -10,7 +10,7 @@
  
     <%
         CaptchaCreator c = new CaptchaCreator();
-    	c.captchaGen();
+    	c.digitCaptchaGen();
     %>
     
 	
