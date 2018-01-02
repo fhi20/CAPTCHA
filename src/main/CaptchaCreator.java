@@ -2,6 +2,7 @@ package main;
 
 import java.io.IOException;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -94,21 +95,30 @@ public class CaptchaCreator {
 			for(int i = 0; i < 6; i++) {
 				int ans = rand.nextInt(10);
 				int ans2 = rand.nextInt(10);
+				int rate1 = ThreadLocalRandom.current().nextInt(80, 116);
+				int rate2 = ThreadLocalRandom.current().nextInt(80, 116);
+				int freq1 = rand.nextInt(20);
+				int freq2 = rand.nextInt(20);
+				boolean high1 = rand.nextBoolean();
+				boolean high2 = rand.nextBoolean();
 				answer = answer + ans;
 				name1 = name1 + ans;
 				name2 = name2 + ans2;
 				if(i==0) {
-					tts.addPreSilence(tts.generateWav(expandNum(ans), voice1), 1, "digits1_pre");
+					tts.addPreSilence(tts.generateWav(expandNum(ans), voice1, rate1, freq1, high1), 
+							1, "digits1_pre");
 					tts.addPostSilence("digits1_pre.wav", 1, "digits1" + seq);
-					tts.addPreSilence(tts.generateWav(expandNum(ans2), voice2), 1, "digits2_pre");
+					tts.addPreSilence(tts.generateWav(expandNum(ans2), voice2, rate2, freq2, high2), 
+							1, "digits2_pre");
 					tts.addPostSilence("digits2_pre.wav", 1, "digits2" + seq);
 				}
 				else {
 					seq = (seq == 0) ? 1 : 0;
 					seq2 = (seq2 == 0) ? 1 : 0;
-					tts.addPostSilence(tts.generateWav(expandNum(ans), voice1), 1, "nextnum");
+					tts.addPostSilence(tts.generateWav(expandNum(ans), voice1, rate1, freq1, high1), 
+							1, "nextnum");
 					tts.appendWav("digits1" + seq2 + ".wav","nextnum.wav","digits1" + seq, false);
-					tts.addPostSilence(tts.generateWav(expandNum(ans2), voice2), 1, "nextnum2");
+					tts.addPostSilence(tts.generateWav(expandNum(ans2), voice2, rate2, freq2, high2), 1, "nextnum2");
 					tts.appendWav("digits2" + seq2 + ".wav","nextnum2.wav","digits2" + seq, false);
 				}
 			}
@@ -135,6 +145,7 @@ public class CaptchaCreator {
 			VoiceType voice1;
 			VoiceType voice2;
 			
+			
 			voice1 = adultF;
 			voice2 = adultM;
 			listenFor = "man";
@@ -146,18 +157,29 @@ public class CaptchaCreator {
 				answer = answer + ans;
 				name1 = name1 + ans;
 				name2 = name2 + ans2;
+				int rate1 = ThreadLocalRandom.current().nextInt(80, 116);
+				int rate2 = ThreadLocalRandom.current().nextInt(80, 116);
+				int freq1 = rand.nextInt(20);
+				int freq2 = rand.nextInt(20);
+				boolean high1 = rand.nextBoolean();
+				boolean high2 = rand.nextBoolean();
+				
 				if(i==0) {
-					tts.addPreSilence(tts.generateWav(Character.toString(ans), voice1), 5, "chars1_pre");
+					tts.addPreSilence(tts.generateWav(Character.toString(ans), voice1, rate1, freq1, high1), 
+							5, "chars1_pre");
 					tts.addPostSilence("chars1_pre.wav", 5, "chars1" + seq);
-					tts.addPreSilence(tts.generateWav(Character.toString(ans2), voice2), 5, "chars2_pre");
+					tts.addPreSilence(tts.generateWav(Character.toString(ans2), voice2, rate2, freq2, high2),
+							5, "chars2_pre");
 					tts.addPostSilence("chars2_pre.wav", 5, "chars2" + seq);
 				}
 				else {
 					seq = (seq == 0) ? 1 : 0;
 					seq2 = (seq2 == 0) ? 1 : 0;
-					tts.addPostSilence(tts.generateWav(Character.toString(ans), voice1), 5, "nextchar");
+					tts.addPostSilence(tts.generateWav(Character.toString(ans), voice1, rate1, freq1, high1), 
+							5, "nextchar");
 					tts.appendWav("chars1" + seq2 + ".wav","nextchar.wav","chars1" + seq, false);
-					tts.addPostSilence(tts.generateWav(Character.toString(ans2), voice2), 5, "nextchar2");
+					tts.addPostSilence(tts.generateWav(Character.toString(ans2), voice2, rate2, freq2, high2), 
+							5, "nextchar2");
 					tts.appendWav("chars2" + seq2 + ".wav","nextchar2.wav","chars2" + seq, false);
 				}
 			}
@@ -174,10 +196,10 @@ public class CaptchaCreator {
 		}
 	}
 
-	public String combineWords(String word1, String word2) {
+	public String combineWords(String word1, String word2, int rate1, int freq1, boolean high1, int rate2, int freq2, boolean high2) {
 		try {
-			AudioFileMixer.mixTwoFiles(tts.generateWav(word1, adultF), 0.5, tts.generateWav(word2, adultM), 
-					0.5, "f_"+word1+"_m_"+word2+".wav");
+			AudioFileMixer.mixTwoFiles(tts.generateWav(word1, adultF, rate1, freq1, high1), 0.5, 
+					tts.generateWav(word2, adultM, rate2, freq2, high2), 0.5, "f_"+word1+"_m_"+word2+".wav");
 		} catch (UnsupportedAudioFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -189,9 +211,5 @@ public class CaptchaCreator {
 		return "f_"+word1+"_m_"+word2+".wav";
 		
 	}
-	
-	
-	
-	
 
 }
